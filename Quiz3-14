@@ -1,0 +1,20 @@
+print(m)
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.model_selection import GridSearchCV
+
+# clf = SVC(kernel='rbf')
+grid_values = {'gamma': [0.01, 0.1, 1, 10],
+               'C': [0.01, 0.1, 1, 10]}
+
+# default metric to optimize over grid parameters: recall
+grid_clf_pre = GridSearchCV(m, param_grid = grid_values, scoring = 'precision')
+grid_clf_pre.fit(X_train, y_train)
+y_decision_fn_scores_pre = grid_clf_pre.decision_function(X_test) 
+
+svm = SVC(kernel='rbf', C=10, gamma=1).fit(X_train, y_train)
+svm_predicted = svm.predict(X_test)
+
+print('Grid best parameter (max. Precision): ', grid_clf_pre.best_params_)
+print('Grid best score (Precision): ', grid_clf_pre.best_score_)
+print('Recall: {:.3f}'.format(recall_score(y_test, svm_predicted)))
+print('Precision - Recall: {:.3f}'.format(grid_clf_pre.best_score_ - recall_score(y_test, svm_predicted)))
